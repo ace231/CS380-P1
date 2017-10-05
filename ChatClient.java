@@ -15,20 +15,26 @@ import java.net.Socket;
 public class ChatClient {
 	public static void main(String[] args) throws Exception{
 		BufferedReader kb = new BufferedReader(new InputStreamReader(System.in));
-		while(true) {
-			try (Socket socket = new Socket("18.221.102.182", 1000)) {
-				String address = socket.getInetAddress().getHostAddress();
-				InputStream is = socket.getInputStream();
-				InputStreamReader isr = new InputStreamReader(is, "UTF-8");
-				BufferedReader br = new BufferedReader(isr);
-				System.out.println(br.readLine());
-					
-					OutputStream os = socket.getOutputStream();
-					PrintStream out = new PrintStream(os, true, "UTF-8");
-			} catch(Exception e) {
-				System.out.println("Something went wrong...");
-				e.printStackTrace();
-			}		
-		}
+		Socket socket = new Socket("18.221.102.182", 38001);
+		
+		// Checking that connection went through
+		String address = socket.getInetAddress().getHostAddress();
+		System.out.printf("Connected to %s", address);
+		
+		// Creating client input stream to receive messages from server	
+		InputStream is = socket.getInputStream();
+		InputStreamReader isr = new InputStreamReader(is, "UTF-8");
+		BufferedReader br = new BufferedReader(isr);
+		
+		// Creating client output stream to send messages to server
+		OutputStream os = socket.getOutputStream();
+		PrintStream out = new PrintStream(os, true, "UTF-8");
+		
+		System.out.print("Username: ");
+		String uName = kb.readLine();
+		out.println(uName);
+		
+		System.out.println(br.readLine());
+
 	}
 }
