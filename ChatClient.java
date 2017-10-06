@@ -37,14 +37,39 @@ public class ChatClient {
 			String uName = kb.readLine();
 			out.printf("%s%n", uName);	// Sending name to server
 			
-			// Loop handles new messages from client to server and from
-			// server to client
+			// Thread that runs indefinitely in a loop. Retrieves messages
+			// from server and displays them.
+			Runnable serverMsgThread = () -> {
+				while(true) {
+					try{
+						String serverMsg = br.readLine();
+						if(serverMsg != null) {
+							System.out.println(serverMsg);
+						}
+					} catch(Exception e) {
+						System.out.println("Yeah something went wrong...");
+					}
+				}
+			};
+			Thread serverThread = new Thread(serverMsgThread);
+			serverThread.start();	// Created an actual Thread object
+									// to interrupt later
+			
+			// Loop handles new messages to server until exit is inputted or 
+			// JVM is interrupted. Also interrupts server thread and closes out
+			// main.
 			while(true) {
-				System.out.print("Message: ");
 				uName = kb.readLine();
-				out.printf("%s%n", uName);
-				System.out.println(br.readLine());
+				if(uName.toLowerCase().equals("exit")){
+					System.out.println("Goodbye");
+					serverThread.interrupt();
+					System.exit(0);
+				}
+				else {
+					out.printf("%s%n", uName);
+				}
 			}
+			
 		}// End or try
 	}// End of main
 }
